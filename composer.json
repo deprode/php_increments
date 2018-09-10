@@ -1,0 +1,11 @@
+{
+    "name": "deprode/php_increments",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "deprode",
+            "email": "sensitively+github@gmail.com"
+        }
+    ],
+    "require": {}
+}
