@@ -1,5 +1,8 @@
 <?php
 
+// TODO: クラスをautoloadで読み込む
+require_once 'vendor/autoload.php';
+
 session_start();
 
 // TODO: セキュリティヘッダ
@@ -17,9 +20,6 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
 }, E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED ^ E_USER_NOTICE);
 
 
-// TODO: クラスをautoloadで読み込む
-require_once 'vendor/autoload.php';
-
 // TODO: 入力のValidation
 $mode = filter_input(INPUT_GET, 'mode');
 $title = filter_input(INPUT_POST, 'title');
@@ -34,12 +34,14 @@ function h($s)
 $settings = [
     'title'    => 'PHP Increment',
     'subtitle' => 'Hello World!',
-    'author'   => 'deprode.net'
+    'author'   => 'deprode.net',
+    'cache'    => 'cache'
 ];
 
 $blog_title = $settings['title'];
 $blog_subtitle = $settings['subtitle'];
 $author = $settings['author'];
+$cache = $settings['cache'];
 
 // TODO: ルーティング作ってFirstRoute
 switch ($mode) {
@@ -89,44 +91,15 @@ if (empty($_SESSION['token']) || $token !== $_SESSION['token']) {
 
 
 // TODO: テンプレートをTwigにする
-?>
-<!doctype html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?= $blog_title; ?></title>
-</head>
-<body>
-<header>
-    <h1 class="title"><?= $blog_title; ?></h1>
-    <p class="subtitle"><?= $blog_subtitle; ?></p>
-</header>
-<nav>
-    <ul>
-        <?php foreach ($posts as $post): ?>
-            <li><?= h($post['title']); ?></li>
-        <?php endforeach; ?>
-    </ul>
-</nav>
-<main>
-    <?php foreach ($posts as $post): ?>
-        <article>
-            <h2><?= h($post['title']); ?></h2>
-            <p><?= h($post['body']); ?></p>
-        </article>
-    <?php endforeach; ?>
-    <h3>新しい記事を投稿する</h3>
-    <form action="./">
-        <input type="hidden" name="mode" value="post">
-        <input type="hidden" name="token" value="<?= h($token) ?>">
-        <label for="title">タイトル：<input type="text" name="title" value=""></label><br>
-        <textarea name="body" cols="30" rows="10" placeholder="ブログの内容"></textarea>
-    </form>
-</main>
-<footer>
-    ©<?= $author ?>
-</footer>
-</body>
-</html>
+$loader = new Twig_Loader_Filesystem('templates');
+$twig = new Twig_Environment($loader, array(
+    'cache' => $cache,
+));
+
+echo $twig->render('index.twig', [
+    'blog_title'    => $blog_title,
+    'blog_subtitle' => $blog_subtitle,
+    'posts'         => $posts,
+    'token'         => $token,
+    'author'        => $author,
+]);
