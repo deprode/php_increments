@@ -43,17 +43,7 @@ $blog_subtitle = $settings['subtitle'];
 $author = $settings['author'];
 $cache = $settings['cache'];
 
-// TODO: ルーティング作ってFirstRoute
-switch ($mode) {
-    case 'admin':
-        $blog_title = '管理モード ' . $blog_title;
-        break;
-    case 'post':
-        $blog_title = '投稿モード ' . $blog_title;
-        break;
-    default:
-        break;
-}
+require "src/route.php";
 
 // TODO: DBALでブログ記事取得
 $posts = [
