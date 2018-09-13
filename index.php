@@ -34,6 +34,10 @@ $cache = $settings['cache'];
 
 require "src/route.php";
 
+if ($error) {
+    exit;
+}
+
 // TODO: DBALでブログ記事取得
 $posts = [
     '0' => [
