@@ -1,7 +1,7 @@
 <?php
 
 // TODO: クラスをautoloadで読み込む
-require_once 'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 session_start();
 
@@ -24,7 +24,7 @@ $settings = [
     'title'    => 'PHP Increment',
     'subtitle' => 'Hello World!',
     'author'   => 'deprode.net',
-    'cache'    => 'cache'
+    'cache'    => '../cache'
 ];
 
 $blog_title = $settings['title'];
@@ -32,7 +32,7 @@ $blog_subtitle = $settings['subtitle'];
 $author = $settings['author'];
 $cache = $settings['cache'];
 
-require "src/route.php";
+require "../src/Route.php";
 
 if ($error) {
     exit;
@@ -64,7 +64,7 @@ $security->checkToken($token, $_SESSION['token']);
 
 
 // TODO: テンプレートをTwigにする
-$loader = new Twig_Loader_Filesystem('templates');
+$loader = new Twig_Loader_Filesystem('../templates');
 $twig = new Twig_Environment($loader, array(
     'cache' => $cache,
 ));
