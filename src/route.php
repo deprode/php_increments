@@ -1,12 +1,10 @@
 <?php
 
+require_once '../vendor/autoload.php';
+
 // FastRouteでルーティング
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->get('/', 'top_handler');
-    $r->get('/admin', 'admin_handler');
-    $r->get('/posts', 'get_articles_handler');
-    $r->get('/post/{id:\d+}', 'get_article_handler');
-    $r->post('/post', 'post_article_handler');
+    $r->get('/', '\App\Action\TopAction:dispatch');
 });
 
 // RequestMethodとURIを取得する
@@ -22,15 +20,11 @@ $uri = rawurldecode($uri);
 // Routeを解決
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
-
-$blog_title = $blog_title ?? '';
-$error = null;
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
-        $mode = dispatch($handler, $vars);
-        $blog_title = $mode . $blog_title;
+        dispatch($container, $handler, $vars);
         break;
 
     case FastRoute\Dispatcher::NOT_FOUND:
@@ -50,18 +44,25 @@ switch ($routeInfo[0]) {
         break;
 }
 
-function dispatch($handler, array $vars): string
+use Psr\Container\ContainerInterface;
+
+/**
+ * @param $handler
+ * @param array $vars
+ * @return void
+ * @throws Exception
+ */
+function dispatch(ContainerInterface $container, $handler, array $vars): void
 {
-    $title = '';
-    switch ($handler) {
-        case 'admin_handler':
-            $title = '管理モード ';
-            break;
-        case 'post_article_handler':
-            $title = '投稿モード ';
-            break;
-        default:
-            break;
+    list($key, $method) = explode(':', $handler);
+
+    if (!$container->has($key)) {
+        throw new Exception('クラスが存在しません');
     }
-    return $title;
+    $instance = $container->get($key);
+
+    if (!method_exists($instance, $method)) {
+        throw new Exception('メソッドが存在しません');
+    }
+    $instance->$method($vars);
 }

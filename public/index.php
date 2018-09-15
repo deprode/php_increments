@@ -13,68 +13,56 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
 }, E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED ^ E_USER_NOTICE);
 
+// DI
+$container = new DI\Container();
+
+/**
+ * 便利クラス // TODO: ここのコメントを考える
+ */
+$container->set('settings', function () {
+    // TODO: blogの設定を設定DBやdotenvから読み込む
+    return [
+        'title'    => 'PHP Increment',
+        'subtitle' => 'Hello World!',
+        'author'   => 'deprode.net',
+        'cache'    => '../cache'
+    ];
+});
+
+$container->set('View', function ($c) {
+    $setting = $c->get('settings');
+
+    // テンプレートをTwigにする
+    $loader = new Twig_Loader_Filesystem('../templates');
+    $twig = new Twig_Environment($loader, array(
+        'cache' => $setting['cache'],
+    ));
+
+    return $twig;
+});
+
+$container->set('Security', function () {
+    return new \App\Security();
+});
+
+/**
+ * Action
+ */
+$container->set('\App\Action\TopAction', function ($c) {
+    return new \App\Action\TopAction($c->get('View'), $c->get('Security'), $c->get('settings'));
+});
+
+
 // TODO: 入力のValidation
 $mode = filter_input(INPUT_GET, 'mode');
 $title = filter_input(INPUT_POST, 'title');
 $body = filter_input(INPUT_POST, 'body');
 $token = filter_input(INPUT_POST, 'token');
 
-// TODO: blogの設定を設定DBやdotenvから読み込む
-$settings = [
-    'title'    => 'PHP Increment',
-    'subtitle' => 'Hello World!',
-    'author'   => 'deprode.net',
-    'cache'    => '../cache'
-];
-
-$blog_title = $settings['title'];
-$blog_subtitle = $settings['subtitle'];
-$author = $settings['author'];
-$cache = $settings['cache'];
 
 require "../src/Route.php";
 
-if ($error) {
-    exit;
-}
-
-// TODO: DBALでブログ記事取得
-$posts = [
-    '0' => [
-        'title' => 'ブログタイトル',
-        'body'  => 'ブログの内容',
-        'date'  => '2018-10-10 10:10:10'
-    ],
-    '1' => [
-        'title' => 'ブログタイトル2',
-        'body'  => 'ブログの内容2',
-        'date'  => '2018-11-11 11:11:11'
-    ],
-];
-
-// TODO: クラスにDI
-
-
-// TODO: フォームにCSRF対策
-$security = new \App\Security();
-$token = $security->generateToken($token);
-$security->checkToken($token, $_SESSION['token']);
-
+// TODO: 投稿の作成
+// TODO: 投稿の一覧
+// TODO: 投稿の詳細
 // TODO: 管理機能（記事の削除・記事の編集）
-
-
-// TODO: テンプレートをTwigにする
-$loader = new Twig_Loader_Filesystem('../templates');
-$twig = new Twig_Environment($loader, array(
-    'cache' => $cache,
-));
-
-$security->outputSecureHeader();
-
-echo $twig->render('index.twig', [
-    'blog_title'    => $blog_title,
-    'blog_subtitle' => $blog_subtitle,
-    'posts'         => $posts,
-    'token'         => $token,
-    'author'        => $author,
-]);
