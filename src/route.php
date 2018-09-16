@@ -4,7 +4,7 @@ require_once '../vendor/autoload.php';
 
 // FastRouteでルーティング
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->get('/', '\App\Action\TopAction:dispatch');
+    $r->get('/', '\App\Action\TopAction');
 });
 
 // RequestMethodとURIを取得する
@@ -54,7 +54,12 @@ use Psr\Container\ContainerInterface;
  */
 function dispatch(ContainerInterface $container, $handler, array $vars): void
 {
-    list($key, $method) = explode(':', $handler);
+    if (mb_strpos($handler, ':')) {
+        list($key, $method) = explode(':', $handler);
+    } else {
+        $key = $handler;
+        $method = '__invoke';
+    }
 
     if (!$container->has($key)) {
         throw new Exception('クラスが存在しません');

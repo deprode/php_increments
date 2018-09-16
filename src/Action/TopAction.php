@@ -18,7 +18,7 @@ class TopAction
         $this->setting = $setting;
     }
 
-    public function dispatch($param)
+    public function __invoke($param)
     {
         $blog_title = $this->setting['title'];
         $blog_subtitle = $this->setting['subtitle'];
@@ -52,5 +52,4 @@ class TopAction
             'author'        => $author,
         ]);
     }
-
 }
