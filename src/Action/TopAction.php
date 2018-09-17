@@ -2,17 +2,20 @@
 
 namespace App\Action;
 
+use App\Domain\ArticleRepository;
 use App\Security;
 use Twig_Environment;
 
 class TopAction
 {
+    private $repository;
     private $twig;
     private $security;
     private $setting;
 
-    public function __construct(Twig_Environment $twig, Security $security, array $setting)
+    public function __construct(ArticleRepository $repository, Twig_Environment $twig, Security $security, array $setting)
     {
+        $this->repository = $repository;
         $this->twig = $twig;
         $this->security = $security;
         $this->setting = $setting;
@@ -29,25 +32,13 @@ class TopAction
         $this->security->checkToken($token, $_SESSION['token']);
         $this->security->outputSecureHeader();
 
-        // TODO: DBALでブログ記事取得
-        $posts = [
-            '0' => [
-                'title' => 'ブログタイトル',
-                'body'  => 'ブログの内容',
-                'date'  => '2018-10-10 10:10:10'
-            ],
-            '1' => [
-                'title' => 'ブログタイトル2',
-                'body'  => 'ブログの内容2',
-                'date'  => '2018-11-11 11:11:11'
-            ],
-        ];
-
+        // ブログ記事の取得
+        $articles = $this->repository->getArticles();
 
         echo $this->twig->render('index.twig', [
             'blog_title'    => $blog_title,
             'blog_subtitle' => $blog_subtitle,
-            'posts'         => $posts,
+            'posts'         => $articles,
             'token'         => $token,
             'author'        => $author,
         ]);

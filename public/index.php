@@ -49,7 +49,14 @@ $container->set('Security', function () {
  * Action
  */
 $container->set('\App\Action\TopAction', function ($c) {
-    return new \App\Action\TopAction($c->get('View'), $c->get('Security'), $c->get('settings'));
+    return new \App\Action\TopAction($c->get('ArticleRepository'), $c->get('View'), $c->get('Security'), $c->get('settings'));
+});
+
+/**
+ * Model
+ */
+$container->set('ArticleRepository', function () {
+    return new \App\Domain\ArticleRepository();
 });
 
 
