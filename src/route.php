@@ -47,6 +47,7 @@ switch ($routeInfo[0]) {
 use Psr\Container\ContainerInterface;
 
 /**
+ * @param ContainerInterface $container
  * @param $handler
  * @param array $vars
  * @return void

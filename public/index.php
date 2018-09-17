@@ -1,6 +1,5 @@
 <?php
 
-// TODO: クラスをautoloadで読み込む
 require_once '../vendor/autoload.php';
 
 session_start();
