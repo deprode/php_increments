@@ -47,7 +47,7 @@ $container->set('Security', function () {
 /**
  * Action
  */
-$container->set('\App\Action\TopAction', function ($c) {
+$container->set(\App\Action\TopAction::class, function ($c) {
     return new \App\Action\TopAction($c->get('ArticleRepository'), $c->get('View'), $c->get('Security'), $c->get('settings'));
 });
 

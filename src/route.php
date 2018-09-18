@@ -4,7 +4,7 @@ require_once '../vendor/autoload.php';
 
 // FastRouteでルーティング
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->get('/', '\App\Action\TopAction');
+    $r->get('/', \App\Action\TopAction::class);
 });
 
 // RequestMethodとURIを取得する
