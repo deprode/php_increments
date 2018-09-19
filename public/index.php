@@ -48,7 +48,7 @@ $container->set('Security', function () {
  * Action
  */
 $container->set(\App\Action\TopAction::class, function ($c) {
-    return new \App\Action\TopAction($c->get('ArticleRepository'), $c->get('View'), $c->get('Security'), $c->get('settings'));
+    return new \App\Action\TopAction($c->get('ArticleRepository'), $c->get('TopResponder'), $c->get('Security'), $c->get('settings'));
 });
 
 /**
@@ -56,6 +56,13 @@ $container->set(\App\Action\TopAction::class, function ($c) {
  */
 $container->set('ArticleRepository', function () {
     return new \App\Domain\ArticleRepository();
+});
+
+/**
+ * Responder
+ */
+$container->set('TopResponder', function ($c) {
+    return new \App\Responder\TopResponder($c->get('View'));
 });
 
 

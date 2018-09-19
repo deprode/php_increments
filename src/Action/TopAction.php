@@ -3,20 +3,20 @@
 namespace App\Action;
 
 use App\Domain\ArticleRepository;
+use App\Responder\TopResponder;
 use App\Security;
-use Twig_Environment;
 
 class TopAction
 {
     private $repository;
-    private $twig;
+    private $responder;
     private $security;
     private $setting;
 
-    public function __construct(ArticleRepository $repository, Twig_Environment $twig, Security $security, array $setting)
+    public function __construct(ArticleRepository $repository, TopResponder $responder, Security $security, array $setting)
     {
         $this->repository = $repository;
-        $this->twig = $twig;
+        $this->responder = $responder;
         $this->security = $security;
         $this->setting = $setting;
     }
@@ -35,7 +35,7 @@ class TopAction
         // ブログ記事の取得
         $articles = $this->repository->getArticles();
 
-        echo $this->twig->render('index.twig', [
+        echo $this->responder->render([
             'blog_title'    => $blog_title,
             'blog_subtitle' => $blog_subtitle,
             'posts'         => $articles,
