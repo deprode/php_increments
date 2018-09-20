@@ -2,6 +2,37 @@
 
 require_once '../vendor/autoload.php';
 
+use Psr\Container\ContainerInterface;
+
+
+/**
+ * @param ContainerInterface $container
+ * @param $handler
+ * @param array $vars
+ * @return array
+ * @throws Exception
+ */
+function dispatch(ContainerInterface $container, $handler, array $vars): array
+{
+    if (mb_strpos($handler, ':')) {
+        list($key, $method) = explode(':', $handler);
+    } else {
+        $key = $handler;
+        $method = '__invoke';
+    }
+
+    if (!$container->has($key)) {
+        throw new Exception('クラスが存在しません');
+    }
+    $instance = $container->get($key);
+
+    if (!method_exists($instance, $method)) {
+        throw new Exception('メソッドが存在しません');
+    }
+    return $instance->$method($vars);
+}
+
+
 // FastRouteでルーティング
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     $r->get('/', \App\Action\TopAction::class);
@@ -20,55 +51,32 @@ $uri = rawurldecode($uri);
 // Routeを解決
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
+$response_status = 0;
+$response_body = '';
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
-        dispatch($container, $handler, $vars);
+        list($response_status, $response_body) = dispatch($container, $handler, $vars);
         break;
 
     case FastRoute\Dispatcher::NOT_FOUND:
-        echo "404 Not Found.";
-        $error = true;
+        $response_body = "404 Not Found.";
+        $response_status = 404;
         break;
 
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeInfo[1];
-        echo "405 Method Not Allowed.  allow only=" . json_encode($allowedMethods);
-        $error = true;
+        $response_body = "405 Method Not Allowed.  allow only=" . json_encode($allowedMethods);
+        $response_status = 405;
         break;
 
     default:
-        echo "500 Server Error.";
-        $error = true;
+        $response_body = "500 Server Error.";
+        $response_status = 500;
         break;
 }
 
-use Psr\Container\ContainerInterface;
-
-/**
- * @param ContainerInterface $container
- * @param $handler
- * @param array $vars
- * @return void
- * @throws Exception
- */
-function dispatch(ContainerInterface $container, $handler, array $vars): void
-{
-    if (mb_strpos($handler, ':')) {
-        list($key, $method) = explode(':', $handler);
-    } else {
-        $key = $handler;
-        $method = '__invoke';
-    }
-
-    if (!$container->has($key)) {
-        throw new Exception('クラスが存在しません');
-    }
-    $instance = $container->get($key);
-
-    if (!method_exists($instance, $method)) {
-        throw new Exception('メソッドが存在しません');
-    }
-    $instance->$method($vars);
-}
+http_response_code($response_status);
+header('Content-Type: text/html; charset=utf-8');
+echo $response_body;

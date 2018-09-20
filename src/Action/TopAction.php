@@ -21,7 +21,7 @@ class TopAction
         $this->setting = $setting;
     }
 
-    public function __invoke($param)
+    public function __invoke($param): array
     {
         $blog_title = $this->setting['title'];
         $blog_subtitle = $this->setting['subtitle'];
@@ -35,12 +35,12 @@ class TopAction
         // ブログ記事の取得
         $articles = $this->repository->getArticles();
 
-        echo $this->responder->render([
+        return [200, $this->responder->render([
             'blog_title'    => $blog_title,
             'blog_subtitle' => $blog_subtitle,
             'posts'         => $articles,
             'token'         => $token,
             'author'        => $author,
-        ]);
+        ])];
     }
 }
