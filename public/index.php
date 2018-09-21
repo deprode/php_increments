@@ -1,6 +1,6 @@
 <?php
 
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 session_start();
 
@@ -12,7 +12,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
 }, E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED ^ E_USER_NOTICE);
 
-require_once "../src/dependencies.php";
+require_once __DIR__ . '/../src/dependencies.php';
 
 // TODO: 入力のValidation
 $mode = filter_input(INPUT_GET, 'mode');
@@ -20,7 +20,7 @@ $title = filter_input(INPUT_POST, 'title');
 $body = filter_input(INPUT_POST, 'body');
 $token = filter_input(INPUT_POST, 'token');
 
-require_once "../src/route.php";
+require_once __DIR__ . '/../src/route.php';
 
 // TODO: 投稿の作成
 // TODO: 投稿の一覧
