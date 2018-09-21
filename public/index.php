@@ -12,59 +12,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
 }, E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED ^ E_USER_NOTICE);
 
-// DI
-$container = new DI\Container();
-
-/**
- * 便利クラス // TODO: ここのコメントを考える
- */
-$container->set('settings', function () {
-    // TODO: blogの設定を設定DBやdotenvから読み込む
-    return [
-        'title'    => 'PHP Increment',
-        'subtitle' => 'Hello World!',
-        'author'   => 'deprode.net',
-        'cache'    => '../cache'
-    ];
-});
-
-$container->set('View', function ($c) {
-    $setting = $c->get('settings');
-
-    // テンプレートをTwigにする
-    $loader = new Twig_Loader_Filesystem('../templates');
-    $twig = new Twig_Environment($loader, array(
-        'cache' => $setting['cache'],
-    ));
-
-    return $twig;
-});
-
-$container->set('Security', function () {
-    return new \App\Security();
-});
-
-/**
- * Action
- */
-$container->set(\App\Action\TopAction::class, function ($c) {
-    return new \App\Action\TopAction($c->get('ArticleRepository'), $c->get('TopResponder'), $c->get('Security'), $c->get('settings'));
-});
-
-/**
- * Model
- */
-$container->set('ArticleRepository', function () {
-    return new \App\Domain\ArticleRepository();
-});
-
-/**
- * Responder
- */
-$container->set('TopResponder', function ($c) {
-    return new \App\Responder\TopResponder($c->get('View'));
-});
-
+require_once "../src/dependencies.php";
 
 // TODO: 入力のValidation
 $mode = filter_input(INPUT_GET, 'mode');
@@ -72,8 +20,7 @@ $title = filter_input(INPUT_POST, 'title');
 $body = filter_input(INPUT_POST, 'body');
 $token = filter_input(INPUT_POST, 'token');
 
-
-require "../src/Route.php";
+require_once "../src/route.php";
 
 // TODO: 投稿の作成
 // TODO: 投稿の一覧
