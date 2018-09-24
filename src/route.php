@@ -77,6 +77,10 @@ switch ($routeInfo[0]) {
         break;
 }
 
-http_response_code($response_status);
-header('Content-Type: text/html; charset=utf-8');
-echo $response_body;
+$response = new Zend\Diactoros\Response();
+$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+$response = $response->withStatus($response_status);
+$response->getBody()->write($response_body);
+
+$emitter = new Zend\HttpHandlerRunner\Emitter\SapiEmitter();
+$emitter->emit($response);
