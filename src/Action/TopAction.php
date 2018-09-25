@@ -5,6 +5,7 @@ namespace App\Action;
 use App\Domain\ArticleRepository;
 use App\Responder\TopResponder;
 use App\Security;
+use Psr\Http\Message\ServerRequestInterface;
 
 class TopAction
 {
@@ -21,7 +22,7 @@ class TopAction
         $this->setting = $setting;
     }
 
-    public function __invoke($param): array
+    public function __invoke(ServerRequestInterface $request): array
     {
         $blog_title = $this->setting['title'];
         $blog_subtitle = $this->setting['subtitle'];

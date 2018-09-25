@@ -3,16 +3,17 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 /**
  * @param ContainerInterface $container
  * @param $handler
- * @param array $vars
+ * @param ServerRequestInterface $request
  * @return array
  * @throws Exception
  */
-function dispatch(ContainerInterface $container, $handler, array $vars): array
+function dispatch(ContainerInterface $container, $handler, ServerRequestInterface $request): array
 {
     if (mb_strpos($handler, ':')) {
         list($key, $method) = explode(':', $handler);
@@ -29,7 +30,7 @@ function dispatch(ContainerInterface $container, $handler, array $vars): array
     if (!method_exists($instance, $method)) {
         throw new Exception('メソッドが存在しません');
     }
-    return $instance->$method($vars);
+    return $instance->$method($request);
 }
 
 
@@ -38,26 +39,18 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
     $r->get('/', \App\Action\TopAction::class);
 });
 
-// RequestMethodとURIを取得する
-$httpMethod = $_SERVER['REQUEST_METHOD'];
-$uri = $_SERVER['REQUEST_URI'];
-
-// クエリストリングを取得し、URIをデコードする
-if (false !== $pos = strpos($uri, '?')) {
-    $uri = substr($uri, 0, $pos);
-}
-$uri = rawurldecode($uri);
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals();
 
 // Routeを解決
-$routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+$routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
 $response_status = 0;
 $response_body = '';
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
-        $vars = $routeInfo[2];
-        list($response_status, $response_body) = dispatch($container, $handler, $vars);
+        list($response_status, $response_body) = dispatch($container, $handler, $request);
+
         break;
 
     case FastRoute\Dispatcher::NOT_FOUND:
