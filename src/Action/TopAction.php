@@ -5,6 +5,7 @@ namespace App\Action;
 use App\Domain\ArticleRepository;
 use App\Responder\TopResponder;
 use App\Security;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class TopAction
@@ -22,7 +23,7 @@ class TopAction
         $this->setting = $setting;
     }
 
-    public function __invoke(ServerRequestInterface $request): array
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $blog_title = $this->setting['title'];
         $blog_subtitle = $this->setting['subtitle'];
@@ -36,12 +37,16 @@ class TopAction
         // ブログ記事の取得
         $articles = $this->repository->getArticles();
 
-        return [200, $this->responder->render([
+        $response->withStatus(200);
+        $response->getBody()->write($this->responder->render([
             'blog_title'    => $blog_title,
             'blog_subtitle' => $blog_subtitle,
             'posts'         => $articles,
             'token'         => $token,
             'author'        => $author,
-        ])];
+        ]));
+        $response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+
+        return $response;
     }
 }

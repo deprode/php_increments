@@ -3,17 +3,18 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
 
 /**
  * @param ContainerInterface $container
  * @param $handler
  * @param ServerRequestInterface $request
- * @return array
+ * @param ResponseInterface $response
+ * @return ResponseInterface
  * @throws Exception
  */
-function dispatch(ContainerInterface $container, $handler, ServerRequestInterface $request): array
+function dispatch(ContainerInterface $container, $handler, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
 {
     if (mb_strpos($handler, ':')) {
         list($key, $method) = explode(':', $handler);
@@ -30,7 +31,8 @@ function dispatch(ContainerInterface $container, $handler, ServerRequestInterfac
     if (!method_exists($instance, $method)) {
         throw new Exception('メソッドが存在しません');
     }
-    return $instance->$method($request);
+
+    return $instance->$method($request, $response);
 }
 
 
@@ -44,36 +46,32 @@ $request = Zend\Diactoros\ServerRequestFactory::fromGlobals();
 // Routeを解決
 $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
 
-$response_status = 0;
-$response_body = '';
+$response = new Zend\Diactoros\Response();
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
-        list($response_status, $response_body) = dispatch($container, $handler, $request);
-
+        $response = dispatch($container, $handler, $request, $response);
         break;
 
     case FastRoute\Dispatcher::NOT_FOUND:
-        $response_body = "404 Not Found.";
-        $response_status = 404;
+        $response = $response->withHeader('Content-Type', 'text/plain; charset=utf-8');
+        $response = $response->withStatus(404);
+        $response->getBody()->write("404 Not Found.");
         break;
 
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        $allowedMethods = $routeInfo[1];
-        $response_body = "405 Method Not Allowed.  allow only=" . json_encode($allowedMethods);
-        $response_status = 405;
+        $response = $response->withHeader('Content-Type', 'text/plain; charset=utf-8');
+        $response = $response->withStatus(405);
+        $response->getBody()->write("405 Method Not Allowed. allow only=" . json_encode($allowedMethods));
         break;
 
     default:
-        $response_body = "500 Server Error.";
-        $response_status = 500;
+        $response = $response->withHeader('Content-Type', 'text/plain; charset=utf-8');
+        $response = $response->withStatus(500);
+        $response->getBody()->write("500 Server Error.");
         break;
 }
 
-$response = new Zend\Diactoros\Response();
-$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
-$response = $response->withStatus($response_status);
-$response->getBody()->write($response_body);
 
 $emitter = new Zend\HttpHandlerRunner\Emitter\SapiEmitter();
 $emitter->emit($response);
