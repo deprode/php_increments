@@ -37,16 +37,12 @@ class TopAction
         // ブログ記事の取得
         $articles = $this->repository->getArticles();
 
-        $response->withStatus(200);
-        $response->getBody()->write($this->responder->render([
+        return $this->responder->render($response, [
             'blog_title'    => $blog_title,
             'blog_subtitle' => $blog_subtitle,
             'posts'         => $articles,
             'token'         => $token,
             'author'        => $author,
-        ]));
-        $response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
-
-        return $response;
+        ]);
     }
 }

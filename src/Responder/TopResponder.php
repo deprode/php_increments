@@ -2,6 +2,7 @@
 
 namespace App\Responder;
 
+use Psr\Http\Message\ResponseInterface;
 use Twig_Environment;
 
 class TopResponder
@@ -16,8 +17,12 @@ class TopResponder
         $this->filename = $file;
     }
 
-    public function render(array $param): string
+    public function render(ResponseInterface $response, array $param): ResponseInterface
     {
-        return $this->twig->render($this->filename, $param);
+        $response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+        $response = $response->withStatus(200);
+        $response->getBody()->write($this->twig->render($this->filename, $param));
+
+        return $response;
     }
 }
