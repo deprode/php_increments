@@ -7,6 +7,7 @@ use App\Responder\TopResponder;
 use App\Security;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class TopAction
 {
@@ -23,7 +24,7 @@ class TopAction
         $this->setting = $setting;
     }
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $blog_title = $this->setting['title'];
         $blog_subtitle = $this->setting['subtitle'];
@@ -36,6 +37,8 @@ class TopAction
 
         // ブログ記事の取得
         $articles = $this->repository->getArticles();
+
+        $response = $handler->handle($request);
 
         return $this->responder->render($response, [
             'blog_title'    => $blog_title,
