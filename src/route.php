@@ -9,15 +9,14 @@ $simpleDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollecto
     $r->get('/', \App\Action\TopAction::class);
 });
 
-$request = Zend\Diactoros\ServerRequestFactory::fromGlobals();
-
 $dispatcher = new Dispatcher([
+    new Middlewares\ErrorHandler(new App\Handler\ErrorRequestHandler()),
     new Middlewares\FastRoute($simpleDispatcher),
-    new Middlewares\RequestHandler($container)
+    new Middlewares\RequestHandler($container),
 ]);
 
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals();
 $response = $dispatcher->dispatch($request);
-//TODO: 次のコミットでエラー対策する
 
 $emitter = new Zend\HttpHandlerRunner\Emitter\SapiEmitter();
 $emitter->emit($response);
