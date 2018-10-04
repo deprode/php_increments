@@ -10,6 +10,7 @@ $simpleDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollecto
 });
 
 $dispatcher = new Dispatcher([
+    new App\Middleware\SecurityHeaderMiddleware(),
     new Middlewares\ErrorHandler(new App\Handler\ErrorRequestHandler()),
     new Middlewares\FastRoute($simpleDispatcher),
     new Middlewares\RequestHandler($container),
