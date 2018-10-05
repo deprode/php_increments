@@ -9,7 +9,7 @@ class Security
         if (empty($token)) {
             try {
                 $token = bin2hex(random_bytes(24));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 exit(1);
             }
             $_SESSION['token'] = $token;
