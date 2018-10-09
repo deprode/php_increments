@@ -12,20 +12,24 @@ $container->set('settings', function () {
         'title'    => 'PHP Increment',
         'subtitle' => 'Hello World!',
         'author'   => 'deprode.net',
-        'cache'    => '../cache'
+        'cache'    => '../cache',
+        'template' => '../templates',
     ];
 });
 
-$container->set('View', function ($c) {
+$container->set('Twig', function ($c) {
     $setting = $c->get('settings');
-
     // テンプレートをTwigにする
-    $loader = new Twig_Loader_Filesystem('../templates');
-    $twig = new Twig_Environment($loader, array(
+    $loader = new Twig_Loader_Filesystem($setting['template']);
+    $twig = new Twig_Environment($loader, [
         'cache' => $setting['cache'],
-    ));
+    ]);
 
     return $twig;
+});
+
+$container->set('View', function ($c) {
+    return new App\Twig($c->get('Twig'));
 });
 
 $container->set('Security', function () {

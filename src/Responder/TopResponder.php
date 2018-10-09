@@ -3,17 +3,17 @@
 namespace App\Responder;
 
 use Psr\Http\Message\ResponseInterface;
-use Twig_Environment;
+use App\Interfaces\ViewInterface;
 
 class TopResponder
 {
-    private $twig;
+    private $view;
     private $filename;
     const DEFAULT_VIEW_FILE = 'index.twig';
 
-    public function __construct(Twig_Environment $twig, string $file = self::DEFAULT_VIEW_FILE)
+    public function __construct(ViewInterface $view, string $file = self::DEFAULT_VIEW_FILE)
     {
-        $this->twig = $twig;
+        $this->view = $view;
         $this->filename = $file;
     }
 
@@ -21,7 +21,7 @@ class TopResponder
     {
         $response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
         $response = $response->withStatus(200);
-        $response->getBody()->write($this->twig->render($this->filename, $param));
+        $response->getBody()->write($this->view->render($this->filename, $param));
 
         return $response;
     }
