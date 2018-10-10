@@ -14,14 +14,17 @@ class Twig implements ViewInterface
         $this->twig = $twig;
     }
 
+    /**
+     * @param string $filename
+     * @param array $param
+     * @return string
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     */
     public function render(string $filename, array $param): string
     {
         try {
             return $this->twig->render($filename, $param);
-        } catch (\Twig_Error_Loader $e) {
-            exit;
-        } catch (\Twig_Error_Runtime $e) {
-            exit;
         } catch (\Twig_Error_Syntax $e) {
             return 'テンプレート構文エラー';
         }

@@ -13,15 +13,15 @@ if (PHP_SAPI === 'cli-server') {
     set_error_handler(function ($errno, $errstr, $errfile, $errline) {
         throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
     }, E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED ^ E_USER_NOTICE);
-
-    set_exception_handler(function ($e) {
-        $fp = fopen('php://stderr', 'w');
-        fputs($fp, $e);
-        header('Content-Type: text/plain; charset=utf-8', true, 500);
-        echo 'エラーです';
-        exit(1);
-    });
 }
+
+set_exception_handler(function ($e) {
+    $fp = fopen('php://stderr', 'w');
+    fputs($fp, $e);
+    header('Content-Type: text/plain; charset=utf-8', true, 500);
+    echo 'エラーです';
+    exit(1);
+});
 
 require_once __DIR__ . '/../src/dependencies.php';
 
