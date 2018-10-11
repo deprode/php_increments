@@ -40,14 +40,21 @@ $container->set('Security', function () {
  * Action
  */
 $container->set(\App\Action\TopAction::class, function ($c) {
-    return new \App\Action\TopAction($c->get('ArticleRepository'), $c->get('TopResponder'), $c->get('Security'), $c->get('settings'));
+    return new \App\Action\TopAction($c->get(\App\Domain\Top::class), $c->get('TopResponder'));
 });
 
 /**
  * Model
  */
+$container->set(\App\Domain\Top::class, function ($c) {
+    return new \App\Domain\Top($c->get('ArticleRepository'), $c->get('Security'), $c->get('settings'));
+});
+
+/**
+ * Repository
+ */
 $container->set('ArticleRepository', function () {
-    return new \App\Domain\ArticleRepository();
+    return new \App\Repository\ArticleRepository();
 });
 
 /**

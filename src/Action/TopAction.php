@@ -2,49 +2,27 @@
 
 namespace App\Action;
 
-use App\Domain\ArticleRepository;
+use App\Domain\Top;
 use App\Responder\TopResponder;
-use App\Security;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class TopAction
 {
-    private $repository;
+    private $domain;
     private $responder;
-    private $security;
-    private $setting;
 
-    public function __construct(ArticleRepository $repository, TopResponder $responder, Security $security, array $setting)
+    public function __construct(Top $domain, TopResponder $responder)
     {
-        $this->repository = $repository;
+        $this->domain = $domain;
         $this->responder = $responder;
-        $this->security = $security;
-        $this->setting = $setting;
     }
 
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $blog_title = $this->setting['title'];
-        $blog_subtitle = $this->setting['subtitle'];
-        $author = $this->setting['author'];
-
-        // フォームにCSRF対策
-        $token = $this->security->generateToken();
-        $this->security->checkToken($token, $_SESSION['token']);
-
-        // ブログ記事の取得
-        $articles = $this->repository->getArticles();
-
         $response = $handler->handle($request);
 
-        return $this->responder->render($response, [
-            'blog_title'    => $blog_title,
-            'blog_subtitle' => $blog_subtitle,
-            'posts'         => $articles,
-            'token'         => $token,
-            'author'        => $author,
-        ]);
+        return $this->responder->render($response, $this->domain->getDomain());
     }
 }
