@@ -2,8 +2,8 @@
 
 namespace App\Domain;
 
-use App\Repository\ArticleRepository;
 use App\Security;
+use App\Interfaces\RepositoryInterface;
 
 class Top
 {
@@ -11,7 +11,7 @@ class Top
     private $security;
     private $setting;
 
-    public function __construct(ArticleRepository $repository, Security $security, array $setting)
+    public function __construct(RepositoryInterface $repository, Security $security, array $setting)
     {
         $this->repository = $repository;
         $this->setting = $setting;
@@ -29,7 +29,7 @@ class Top
         $this->security->checkToken($token, $_SESSION['token']);
 
         // ブログ記事の取得
-        $articles = $this->repository->getArticles();
+        $articles = $this->repository->fetchAll();
 
         return [
             'blog_title'    => $blog_title,
