@@ -1,5 +1,6 @@
 <?php
 
+namespace Tests;
 
 use App\Twig;
 use PHPUnit\Framework\TestCase;
@@ -9,7 +10,7 @@ class TwigTest extends TestCase
     public function testRender()
     {
         /** @var \Twig\Environment|\PHPUnit\Framework\MockObject\MockObject $twig_env */
-        $twig_env = $this->createMock(Twig_Environment::class);
+        $twig_env = $this->createMock(\Twig_Environment::class);
         $twig_env
             ->expects($this->any())
             ->method('render')
@@ -24,7 +25,7 @@ class TwigTest extends TestCase
     public function testSyntaxError()
     {
         /** @var \Twig\Environment|\PHPUnit\Framework\MockObject\MockObject $twig_env */
-        $twig_env = $this->createMock(Twig_Environment::class);
+        $twig_env = $this->createMock(\Twig_Environment::class);
         $twig_env
             ->expects($this->any())
             ->method('render')

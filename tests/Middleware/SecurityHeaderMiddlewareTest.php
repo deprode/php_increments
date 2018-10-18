@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace Tests\Middleware;
 
 use Middlewares\Utils\Dispatcher;
 use App\Middleware\SecurityHeaderMiddleware;
