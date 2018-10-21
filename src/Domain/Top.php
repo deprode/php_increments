@@ -26,7 +26,6 @@ class Top
 
         // フォームにCSRF対策
         $token = $this->security->generateToken();
-        $this->security->checkToken($token, $_SESSION['token']);
 
         // ブログ記事の取得
         $articles = $this->repository->fetchAll();

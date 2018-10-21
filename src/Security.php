@@ -19,10 +19,16 @@ class Security
         return $token;
     }
 
-    public function checkToken(string $token, string $saved_token = '')
+    public function validToken(string $token, string $saved_token = ''): bool
     {
-        if (empty($saved_token) || $token !== $saved_token) {
-            die('正規の画面から投稿してください');
+        if (empty($saved_token)) {
+            $saved_token = $_SESSION['token'] ?? '';
         }
+
+        if ($token !== $saved_token) {
+            return false;
+        }
+
+        return true;
     }
 }
