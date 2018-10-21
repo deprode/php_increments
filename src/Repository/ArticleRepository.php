@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 
+use App\Entity\Article;
 use App\Interfaces\RepositoryInterface;
 
 class ArticleRepository implements RepositoryInterface
@@ -11,17 +12,18 @@ class ArticleRepository implements RepositoryInterface
 
     public function __construct()
     {
+        $article1 = new Article();
+        $article1->setTitle('ブログタイトル');
+        $article1->setBody('ブログの内容');
+        $article1->setDate(new \DateTime('2018-10-10 10:10:10'));
+        $article2 = new Article();
+        $article2->setTitle('ブログタイトル2');
+        $article2->setBody('ブログの内容2');
+        $article2->setDate(new \DateTime('2018-11-11 11:11:11'));
+
         $this->articles = [
-            '1' => [
-                'title' => 'ブログタイトル',
-                'body'  => 'ブログの内容',
-                'date'  => '2018-10-10 10:10:10'
-            ],
-            '2' => [
-                'title' => 'ブログタイトル2',
-                'body'  => 'ブログの内容2',
-                'date'  => '2018-11-11 11:11:11'
-            ],
+            '1' => $article1,
+            '2' => $article2,
         ];
     }
 
@@ -37,7 +39,7 @@ class ArticleRepository implements RepositoryInterface
         return $this->articles;
     }
 
-    public function create(array $article = [])
+    public function create(Article $article = null)
     {
         if (empty($article)) {
             return;
@@ -46,7 +48,7 @@ class ArticleRepository implements RepositoryInterface
         $this->articles[] = $article;
     }
 
-    public function update(int $id = 0, array $article = [])
+    public function update(int $id = 0, Article $article = null)
     {
         if (empty($id)) {
             return;
