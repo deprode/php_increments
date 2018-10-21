@@ -43,11 +43,18 @@ $container->set(\App\Action\TopAction::class, function ($c) {
     return new \App\Action\TopAction($c->get(\App\Domain\Top::class), $c->get('TopResponder'));
 });
 
+$container->set(\App\Action\ArticleSaveAction::class, function ($c) {
+    return new \App\Action\ArticleSaveAction($c->get(\App\Domain\ArticleSave::class));
+});
+
 /**
  * Model
  */
 $container->set(\App\Domain\Top::class, function ($c) {
     return new \App\Domain\Top($c->get('ArticleRepository'), $c->get('Security'), $c->get('settings'));
+});
+$container->set(\App\Domain\ArticleSave::class, function ($c) {
+    return new \App\Domain\ArticleSave($c->get('ArticleRepository'), $c->get('Security'));
 });
 
 /**

@@ -7,6 +7,7 @@ use Middlewares\Utils\Dispatcher;
 // FastRouteでルーティング
 $simpleDispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     $r->get('/', \App\Action\TopAction::class);
+    $r->post('/', \App\Action\ArticleSaveAction::class);
 });
 
 $dispatcher = new Dispatcher([
