@@ -9,12 +9,11 @@ class TwigTest extends TestCase
 {
     public function testRender()
     {
-        /** @var \Twig\Environment|\PHPUnit\Framework\MockObject\MockObject $twig_env */
-        $twig_env = $this->createMock(\Twig_Environment::class);
+        /** @var \Twig\Environment|\Mockery\MockInterface $twig_env */
+        $twig_env = \Mockery::mock(\Twig_Environment::class);
         $twig_env
-            ->expects($this->any())
-            ->method('render')
-            ->willReturn('<h1>Hello World!</h1>');
+            ->shouldReceive('render')
+            ->andReturn('<h1>Hello World!</h1>');
 
         $twig = new Twig($twig_env);
         $result = $twig->render('test.twig', []);
@@ -24,12 +23,11 @@ class TwigTest extends TestCase
 
     public function testSyntaxError()
     {
-        /** @var \Twig\Environment|\PHPUnit\Framework\MockObject\MockObject $twig_env */
-        $twig_env = $this->createMock(\Twig_Environment::class);
+        /** @var \Twig\Environment|\Mockery\MockInterface $twig_env */
+        $twig_env = \Mockery::mock(\Twig_Environment::class);
         $twig_env
-            ->expects($this->any())
-            ->method('render')
-            ->willThrowException(new \Twig_Error_Syntax('エラー'));
+            ->shouldReceive('render')
+            ->andThrowExceptions([new \Twig_Error_Syntax('エラー')]);
 
         $twig = new Twig($twig_env);
         $result = $twig->render('error.twig', []);

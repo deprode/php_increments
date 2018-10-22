@@ -22,7 +22,7 @@ jobs:
         - v1-dependencies-{{ checksum "composer.json" }}
         - v1-dependencies-
 
-    - run: composer install -n --prefer-dist
+    - run: composer install -n --prefer-dist --dev
 
     - save_cache:
         paths:

@@ -6,6 +6,7 @@ use App\Domain\Top;
 use PHPUnit\Framework\TestCase;
 use App\Security;
 use App\Repository\ArticleRepository;
+use \Mockery;
 
 class TopTest extends TestCase
 {
@@ -15,19 +16,17 @@ class TopTest extends TestCase
         $_SESSION = ['token' => 'test token'];
         $settings = ['title' => 'test title', 'subtitle' => 'test subtitle', 'author' => 'test author'];
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Security $security */
-        $security = $this->createMock(Security::class);
+        /** @var \Mockery\MockInterface|Security $security */
+        $security = Mockery::mock(Security::class);
         $security
-            ->expects($this->any())
-            ->method('generateToken')
-            ->willReturn('test token');
+            ->shouldReceive('generateToken')
+            ->andReturn('test token');
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ArticleRepository $repository */
-        $repository = $this->createMock(ArticleRepository::class);
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
         $repository
-            ->expects($this->any())
-            ->method('fetchAll')
-            ->willReturn(['articles']);
+            ->shouldReceive('fetchAll')
+            ->andReturn(['articles']);
 
         $top = new Top($repository, $security, $settings);
 
