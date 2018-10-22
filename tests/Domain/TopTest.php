@@ -10,6 +10,11 @@ use \Mockery;
 
 class TopTest extends TestCase
 {
+    protected function tearDown()
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
 
     public function testGetDomain()
     {
