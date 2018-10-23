@@ -4,18 +4,24 @@ namespace App;
 
 class Security
 {
-    public function generateToken(?string $token = ''): string
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    protected function getToken(): string
     {
-        if (empty($token)) {
-            try {
-                $token = bin2hex(random_bytes(24));
-            } catch (\Exception $e) {
-                exit(1);
-            }
+        return bin2hex(random_bytes(24));
+    }
+
+    public function generateToken(): string
+    {
+        try {
+            $token = $this->getToken();
             $_SESSION['token'] = $token;
-        } else {
-            $token = $_SESSION['token'];
+        } catch (\Exception $e) {
+            exit(1);
         }
+
         return $token;
     }
 
