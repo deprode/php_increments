@@ -25,12 +25,6 @@ set_exception_handler(function ($e) {
 
 require_once __DIR__ . '/../src/dependencies.php';
 
-// TODO: 入力のValidation
-$mode = filter_input(INPUT_GET, 'mode');
-$title = filter_input(INPUT_POST, 'title');
-$body = filter_input(INPUT_POST, 'body');
-$token = filter_input(INPUT_POST, 'token');
-
 require_once __DIR__ . '/../src/route.php';
 
 // TODO: 投稿の作成
