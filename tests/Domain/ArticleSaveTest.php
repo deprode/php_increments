@@ -45,7 +45,8 @@ class ArticleSaveTest extends TestCase
         $_SESSION = ['token' => 'invalid token'];
 
         $security = new Security();
-        $repository = new ArticleRepository();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security);
 
         $domain->saveArticle([
@@ -64,7 +65,8 @@ class ArticleSaveTest extends TestCase
         $_SESSION = ['token' => 'test token'];
 
         $security = new Security();
-        $repository = new ArticleRepository();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security);
 
         $title = bin2hex(random_bytes(100));
@@ -84,7 +86,8 @@ class ArticleSaveTest extends TestCase
         $_SESSION = ['token' => 'test token'];
 
         $security = new Security();
-        $repository = new ArticleRepository();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security);
 
         $body = bin2hex(random_bytes(8000));

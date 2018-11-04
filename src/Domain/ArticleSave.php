@@ -4,7 +4,7 @@
 namespace App\Domain;
 
 use App\Entity\Article;
-use App\Interfaces\RepositoryInterface;
+use App\Repository\ArticleRepository;
 use App\Security;
 
 class ArticleSave
@@ -15,7 +15,7 @@ class ArticleSave
     /** @var Security */
     private $security;
 
-    public function __construct(RepositoryInterface $articles, Security $security)
+    public function __construct(ArticleRepository $articles, Security $security)
     {
         $this->articles = $articles;
         $this->security = $security;

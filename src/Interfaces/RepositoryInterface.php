@@ -12,5 +12,5 @@ interface RepositoryInterface
 
     public function fetchAll();
 
-    public function fetch(int $id);
+    public function fetch();
 }
