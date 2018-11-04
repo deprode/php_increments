@@ -8,31 +8,30 @@ use App\Interfaces\RepositoryInterface;
 
 class ArticleRepository implements RepositoryInterface
 {
-    protected $articles;
+    private $connection;
 
-    public function __construct()
+    public function __construct(\Doctrine\DBAL\Connection $connection)
     {
-        $this->articles = [];
+        $this->connection = $connection;
     }
 
-    /** TODO: DBAL追加時に消す */
-    public function __set($name, $value)
-    {
-        if ($name === 'articles') {
-            $this->articles = $value;
-        }
-    }
 
     public function fetch(int $id = 0): Article
     {
-        return $this->articles[$id];
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $sql = $queryBuilder->select('*')->from('Articles')->where('id = :id')->getSQL();
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue('id', $id);
+        $stmt->execute();
+        $stmt->setFetchMode(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, Article::class);
+        return $stmt->fetch();
     }
 
     public function fetchAll(): array
     {
-        // TODO: DBALでブログ記事取得
-
-        return $this->articles;
+        $queryBuilder = $this->connection->createQueryBuilder();
+        $stmt = $queryBuilder->select('*')->from('Articles')->execute();
+        return $stmt->fetchAll(\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT, Article::class);
     }
 
     public function create(Article $article = null): void
@@ -41,7 +40,14 @@ class ArticleRepository implements RepositoryInterface
             return;
         }
 
-        $this->articles[] = $article;
+        $this->connection->insert(
+            'Articles',
+            [
+                'title'      => $article->getTitle(),
+                'body'       => $article->getBody(),
+                'created_at' => $article->getDate()->format('Y-m-d H:i:s')
+            ]
+        );
     }
 
     public function update(int $id = 0, Article $article = null): void
@@ -50,7 +56,11 @@ class ArticleRepository implements RepositoryInterface
             return;
         }
 
-        $this->articles[$id] = $article;
+        $this->connection->update(
+            'Articles',
+            ['title' => ':title', 'body' => ':body', 'created_at' => ':date'],
+            ['id' => $id]
+        );
     }
 
     public function delete(int $id = 0): void
@@ -59,6 +69,6 @@ class ArticleRepository implements RepositoryInterface
             return;
         }
 
-        array_splice($this->articles, $id);
+        $this->connection->delete('Articles', ['id' => $id]);
     }
 }

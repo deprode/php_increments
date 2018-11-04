@@ -36,6 +36,20 @@ $container->set('Security', function () {
     return new \App\Security();
 });
 
+$container->set('DBAL', function () {
+    $config = new \Doctrine\DBAL\Configuration();
+
+    $connectionParams = [
+        'dbname'   => 'php_increment',
+        'user'     => 'postgres',
+        'password' => 'password',
+        'host'     => 'db',
+        'driver'   => 'pdo_pgsql',
+    ];
+
+    return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+});
+
 /**
  * Action
  */
@@ -60,8 +74,8 @@ $container->set(\App\Domain\ArticleSave::class, function ($c) {
 /**
  * Repository
  */
-$container->set('ArticleRepository', function () {
-    return new \App\Repository\ArticleRepository();
+$container->set('ArticleRepository', function ($c) {
+    return new \App\Repository\ArticleRepository($c->get('DBAL'));
 });
 
 /**
