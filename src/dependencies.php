@@ -50,6 +50,10 @@ $container->set('DBAL', function () {
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 });
 
+$container->set('Database', function ($c) {
+    return new App\Database($c->get('DBAL'));
+});
+
 /**
  * Action
  */
@@ -75,7 +79,7 @@ $container->set(\App\Domain\ArticleSave::class, function ($c) {
  * Repository
  */
 $container->set('ArticleRepository', function ($c) {
-    return new \App\Repository\ArticleRepository($c->get('DBAL'));
+    return new \App\Repository\ArticleRepository($c->get('Database'));
 });
 
 /**
