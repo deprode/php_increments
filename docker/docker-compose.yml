@@ -20,6 +20,8 @@ services:
     build:
       context: .
       dockerfile: app/Dockerfile
+    depends_on:
+      - db
     environment:
       docker: "true"
     volumes:
