@@ -12,7 +12,7 @@ $container->set('settings', function () {
         'title'    => 'PHP Increment',
         'subtitle' => 'Hello World!',
         'author'   => 'deprode.net',
-        'cache'    => '../cache',
+        'cache'    => '../storage/cache',
         'template' => '../templates',
     ];
 });
