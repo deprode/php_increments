@@ -13,6 +13,8 @@ class ArticleRepositoryTest extends TestCase
     protected $articles;
     /** @var ArticleRepository */
     protected $repository;
+    /** @var \Mockery\MockInterface */
+    protected $database;
 
     protected function setUp()
     {
@@ -32,48 +34,58 @@ class ArticleRepositoryTest extends TestCase
             2 => $article2,
         ];
 
-        $database = Mockery::mock(Database::class);
+        $this->database = Mockery::spy(Database::class);
 
-        $database->shouldReceive('create')->andReturnTrue();
-        $database->shouldReceive('update')->andReturnTrue();
-        $database->shouldReceive('delete')->andReturnTrue();
-        $database->shouldReceive('fetch')->andReturn($this->articles[1]);
-        $database->shouldReceive('fetchAll')->andReturn($this->articles);
-
-        $this->repository = new ArticleRepository($database);
+        $this->repository = new ArticleRepository($this->database);
     }
 
     protected function tearDown()
     {
         parent::tearDown();
+
+        $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
+
         Mockery::close();
     }
 
     public function testCreate()
     {
         $article1 = new Article();
-        $article1->setTitle('ブログタイトル update');
-        $article1->setBody('ブログの内容 update');
+        $article1->setTitle('ブログタイトル create');
+        $article1->setBody('ブログの内容 create');
         $article1->setDate(new \DateTime('2018-12-12 12:12:12'));
+
+        $this->database->shouldReceive('create')->andReturnTrue();
 
         $this->repository->create($article1);
 
-        $this->assertTrue(true);
+        $this->database->shouldHaveReceived('create', [ArticleRepository::TABLE_NAME, [
+            'title'      => 'ブログタイトル create',
+            'body'       => 'ブログの内容 create',
+            'created_at' => '2018-12-12 12:12:12'
+        ]]);
     }
 
     public function testDelete()
     {
+        $this->database->shouldReceive('delete')->andReturnTrue();
+
         $this->repository->delete(1);
-        $this->assertTrue(true);
+
+        $this->database->shouldHaveReceived('delete', [ArticleRepository::TABLE_NAME, 1]);
     }
 
     public function testFetchAll()
     {
+        $this->database->shouldReceive('fetchAll')->andReturn($this->articles);
+
         $this->assertEquals($this->articles, $this->repository->fetchAll());
     }
 
     public function testFetch()
     {
+        $this->database->shouldReceive('fetch')->andReturn($this->articles[1]);
+
         $this->assertEquals($this->articles[1], $this->repository->fetch(1));
     }
 
@@ -84,7 +96,17 @@ class ArticleRepositoryTest extends TestCase
         $article1->setBody('ブログの内容 update');
         $article1->setDate(new \DateTime('2018-12-12 12:12:12'));
 
+        $this->database->shouldReceive('update')->andReturnTrue();
+
         $this->repository->update(1, $article1);
-        $this->assertTrue(true);
+        $this->database->shouldHaveReceived('update', [
+            ArticleRepository::TABLE_NAME,
+            [
+                'title'      => 'ブログタイトル update',
+                'body'       => 'ブログの内容 update',
+                'created_at' => '2018-12-12 12:12:12'
+            ],
+            1
+        ]);
     }
 }
