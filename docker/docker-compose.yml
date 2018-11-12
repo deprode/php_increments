@@ -6,7 +6,9 @@ volumes:
 
 services:
   web:
-    image: nginx:1
+    build:
+      context: .
+      dockerfile: web/Dockerfile
     ports:
       - "8080:80"
     links:
