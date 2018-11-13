@@ -28,6 +28,7 @@ services:
       docker: "true"
     volumes:
       - ../.:/var/www/html
+      - ./app/php.ini:/usr/local/etc/php/php.ini
 
   db:
     build:
