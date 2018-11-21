@@ -1,0 +1,8 @@
+CACHE_PATH=../storage/cache
+TEMPLATE_PATH=../templates
+
+DB_NAME=default
+DB_USER=postgres
+DB_PASSWORD=secret
+DB_HOST=localhost
+DB_DRIVER=pdo_pgsql

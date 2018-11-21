@@ -11,3 +11,5 @@ composer.phar
 /storage/logs/
 
 /data/
+
+.env

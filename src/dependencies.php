@@ -7,13 +7,18 @@ $container = new DI\Container();
  * 便利クラス // TODO: ここのコメントを考える
  */
 $container->set('settings', function () {
-    // TODO: blogの設定を設定DBやdotenvから読み込む
+    // TODO: blogの設定を設定DBから読み込む
     return [
-        'title'    => 'PHP Increment',
-        'subtitle' => 'Hello World!',
-        'author'   => 'deprode.net',
-        'cache'    => '../storage/cache',
-        'template' => '../templates',
+        'title'       => 'PHP Increment',
+        'subtitle'    => 'Hello World!',
+        'author'      => 'deprode.net',
+        'cache'       => getenv('CACHE_PATH'),
+        'template'    => getenv('TEMPLATE_PATH'),
+        'db_name'     => getenv('DB_NAME'),
+        'db_user'     => getenv('DB_USER'),
+        'db_password' => getenv('DB_PASSWORD'),
+        'db_host'     => getenv('DB_HOST'),
+        'db_driver'   => getenv('DB_DRIVER'),
     ];
 });
 
@@ -36,15 +41,16 @@ $container->set('Security', function () {
     return new \App\Security();
 });
 
-$container->set('DBAL', function () {
+$container->set('DBAL', function ($c) {
+    $setting = $c->get('settings');
     $config = new \Doctrine\DBAL\Configuration();
 
     $connectionParams = [
-        'dbname'   => 'php_increment',
-        'user'     => 'postgres',
-        'password' => 'password',
-        'host'     => 'db',
-        'driver'   => 'pdo_pgsql',
+        'dbname'   => $setting['db_name'],
+        'user'     => $setting['db_user'],
+        'password' => $setting['db_password'],
+        'host'     => $setting['db_host'],
+        'driver'   => $setting['db_driver'],
     ];
 
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
