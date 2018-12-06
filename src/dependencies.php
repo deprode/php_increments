@@ -66,9 +66,11 @@ $container->set('Database', function ($c) {
 $container->set(\App\Action\TopAction::class, function ($c) {
     return new \App\Action\TopAction($c->get(\App\Domain\Top::class), $c->get('TopResponder'));
 });
-
 $container->set(\App\Action\ArticleSaveAction::class, function ($c) {
     return new \App\Action\ArticleSaveAction($c->get(\App\Domain\ArticleSave::class));
+});
+$container->set(\App\Action\ArticleAction::class, function ($c) {
+    return new \App\Action\ArticleAction($c->get(\App\Domain\Article::class), $c->get('ArticleResponder'));
 });
 
 /**
@@ -79,6 +81,9 @@ $container->set(\App\Domain\Top::class, function ($c) {
 });
 $container->set(\App\Domain\ArticleSave::class, function ($c) {
     return new \App\Domain\ArticleSave($c->get('ArticleRepository'), $c->get('Security'));
+});
+$container->set(\App\Domain\Article::class, function ($c) {
+    return new \App\Domain\Article($c->get('ArticleRepository'), $c->get('settings'));
 });
 
 /**
@@ -93,4 +98,7 @@ $container->set('ArticleRepository', function ($c) {
  */
 $container->set('TopResponder', function ($c) {
     return new \App\Responder\TopResponder($c->get('View'));
+});
+$container->set('ArticleResponder', function ($c) {
+    return new \App\Responder\ArticleResponder($c->get('View'));
 });
