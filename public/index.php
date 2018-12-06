@@ -4,6 +4,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 session_start();
 
+$env_file = __DIR__ . '/../.env';
+if (is_readable($env_file)) {
+    $dot_env = new Dotenv\Dotenv(__DIR__ . '/../');
+    $dot_env->load();
+}
+
 // エラー関連の設定は開発時かつcliの時だけ
 if (PHP_SAPI === 'cli-server') {
     ini_set("display_errors", 0);
