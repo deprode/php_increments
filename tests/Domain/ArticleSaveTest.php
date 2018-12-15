@@ -36,6 +36,21 @@ class ArticleSaveTest extends TestCase
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
     }
 
+    public function testSaveArticleNotTitle()
+    {
+        $_SESSION = ['token' => 'test token'];
+
+        $security = new Security();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::spy(ArticleRepository::class);
+
+        $domain = new ArticleSave($repository, $security);
+        $class = new \ReflectionClass($domain);
+        $method = $class->getMethod('getTitle');
+        $method->setAccessible(true);
+        $this->assertEquals('無題', $method->invokeArgs($domain, ['']));
+    }
+
     /**
      * @expectedException \Exception
      * @expectedExceptionMessage 正規の画面から投稿してください
@@ -73,6 +88,26 @@ class ArticleSaveTest extends TestCase
         $domain->saveArticle([
             'title' => $title,
             'body'  => '<h1>テストタイトル</h1>',
+            'token' => 'test token'
+        ]);
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage 投稿内容がありません。0字以上にしてください。
+     */
+    public function testBodyEmptyError()
+    {
+        $_SESSION = ['token' => 'test token'];
+
+        $security = new Security();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
+        $domain = new ArticleSave($repository, $security);
+
+        $domain->saveArticle([
+            'title' => 'test',
+            'body'  => '',
             'token' => 'test token'
         ]);
     }
