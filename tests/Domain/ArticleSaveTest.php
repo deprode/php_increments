@@ -3,17 +3,26 @@
 namespace Tests\Domain;
 
 use App\Domain\ArticleSave;
+use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use App\Security;
+use Carbon\Carbon;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class ArticleSaveTest extends TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        Carbon::setTestNow(Carbon::parse('2019-01-01 11:11:11'));
+    }
+
     protected function tearDown()
     {
         parent::tearDown();
         Mockery::close();
+        Carbon::setTestNow();
     }
 
     public function testSaveArticle()
@@ -24,7 +33,7 @@ class ArticleSaveTest extends TestCase
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::spy(ArticleRepository::class);
 
-        $domain = new ArticleSave($repository, $security);
+        $domain = new ArticleSave($repository, $security, new Carbon());
         $domain->saveArticle([
             'title' => 'テスト',
             'body'  => '<h1>テストタイトル</h1>',
@@ -36,6 +45,41 @@ class ArticleSaveTest extends TestCase
         $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
     }
 
+    public function testGetTitle()
+    {
+        $_SESSION = ['token' => 'test token'];
+
+        $security = new Security();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
+
+        $domain = new ArticleSave($repository, $security, new Carbon());
+        $class = new \ReflectionClass($domain);
+        $method = $class->getMethod('getTitle');
+        $method->setAccessible(true);
+        $this->assertEquals('テスト', $method->invokeArgs($domain, ['テスト']));
+    }
+
+    public function testGetArticle()
+    {
+        $_SESSION = ['token' => 'test token'];
+
+        $security = new Security();
+        /** @var \Mockery\MockInterface|ArticleRepository $repository */
+        $repository = Mockery::mock(ArticleRepository::class);
+
+        $article = new Article();
+        $article->setTitle('テスト');
+        $article->setBody('テストタイトル');
+        $article->setDate(Carbon::now());
+
+        $domain = new ArticleSave($repository, $security, new Carbon());
+        $class = new \ReflectionClass($domain);
+        $method = $class->getMethod('getArticle');
+        $method->setAccessible(true);
+        $this->assertEquals($article, $method->invokeArgs($domain, ['テスト', 'テストタイトル']));
+    }
+
     public function testSaveArticleNotTitle()
     {
         $_SESSION = ['token' => 'test token'];
@@ -44,7 +88,7 @@ class ArticleSaveTest extends TestCase
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::spy(ArticleRepository::class);
 
-        $domain = new ArticleSave($repository, $security);
+        $domain = new ArticleSave($repository, $security, new Carbon());
         $class = new \ReflectionClass($domain);
         $method = $class->getMethod('getTitle');
         $method->setAccessible(true);
@@ -62,7 +106,7 @@ class ArticleSaveTest extends TestCase
         $security = new Security();
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
-        $domain = new ArticleSave($repository, $security);
+        $domain = new ArticleSave($repository, $security, new Carbon());
 
         $domain->saveArticle([
             'title' => 'テスト',
@@ -82,7 +126,7 @@ class ArticleSaveTest extends TestCase
         $security = new Security();
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
-        $domain = new ArticleSave($repository, $security);
+        $domain = new ArticleSave($repository, $security, new Carbon());
 
         $title = bin2hex(random_bytes(100));
         $domain->saveArticle([
@@ -103,7 +147,7 @@ class ArticleSaveTest extends TestCase
         $security = new Security();
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
-        $domain = new ArticleSave($repository, $security);
+        $domain = new ArticleSave($repository, $security, new Carbon());
 
         $domain->saveArticle([
             'title' => 'test',
@@ -123,7 +167,7 @@ class ArticleSaveTest extends TestCase
         $security = new Security();
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
-        $domain = new ArticleSave($repository, $security);
+        $domain = new ArticleSave($repository, $security, new Carbon());
 
         $body = bin2hex(random_bytes(8000));
         $domain->saveArticle([

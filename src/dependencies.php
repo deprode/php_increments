@@ -60,6 +60,10 @@ $container->set('Database', function ($c) {
     return new App\Database($c->get('DBAL'));
 });
 
+$container->set('Carbon', function () {
+    return new Carbon\Carbon();
+});
+
 /**
  * Action
  */
@@ -80,7 +84,7 @@ $container->set(\App\Domain\Top::class, function ($c) {
     return new \App\Domain\Top($c->get('ArticleRepository'), $c->get('Security'), $c->get('settings'));
 });
 $container->set(\App\Domain\ArticleSave::class, function ($c) {
-    return new \App\Domain\ArticleSave($c->get('ArticleRepository'), $c->get('Security'));
+    return new \App\Domain\ArticleSave($c->get('ArticleRepository'), $c->get('Security'), $c->get('Carbon'));
 });
 $container->set(\App\Domain\Article::class, function ($c) {
     return new \App\Domain\Article($c->get('ArticleRepository'), $c->get('settings'));

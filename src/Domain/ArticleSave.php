@@ -6,6 +6,7 @@ namespace App\Domain;
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use App\Security;
+use Carbon\Carbon;
 
 class ArticleSave
 {
@@ -15,10 +16,14 @@ class ArticleSave
     /** @var Security */
     private $security;
 
-    public function __construct(ArticleRepository $articles, Security $security)
+    /** @var Carbon $carbon */
+    private $carbon;
+
+    public function __construct(ArticleRepository $articles, Security $security, Carbon $carbon)
     {
         $this->articles = $articles;
         $this->security = $security;
+        $this->carbon = $carbon;
     }
 
     /**
@@ -42,7 +47,7 @@ class ArticleSave
             throw new \Exception('投稿内容が長すぎます。8000字以内にしてください。');
         }
 
-        $article = $this->getArticle($title, $body, 'now');
+        $article = $this->getArticle($title, $body);
         $this->articles->create($article);
     }
 
@@ -51,13 +56,12 @@ class ArticleSave
         return (empty($title) ? '無題' : $title);
     }
 
-
-    protected function getArticle(string $title, string $body, string $date): Article
+    protected function getArticle(string $title, string $body): Article
     {
         $article = new Article();
         $article->setTitle($title);
         $article->setBody($body);
-        $article->setDate(new \DateTime($date));
+        $article->setDate($this->carbon::now());
 
         return $article;
     }
