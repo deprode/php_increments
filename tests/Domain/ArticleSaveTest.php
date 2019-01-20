@@ -6,6 +6,7 @@ use App\Domain\ArticleSave;
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
 use App\Security;
+use App\Session;
 use Carbon\Carbon;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +30,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::spy(ArticleRepository::class);
 
@@ -49,7 +50,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
 
@@ -64,7 +65,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
 
@@ -84,7 +85,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::spy(ArticleRepository::class);
 
@@ -103,7 +104,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'invalid token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security, new Carbon());
@@ -123,7 +124,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security, new Carbon());
@@ -144,7 +145,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security, new Carbon());
@@ -164,7 +165,7 @@ class ArticleSaveTest extends TestCase
     {
         $_SESSION = ['token' => 'test token'];
 
-        $security = new Security();
+        $security = new Security(new Session());
         /** @var \Mockery\MockInterface|ArticleRepository $repository */
         $repository = Mockery::mock(ArticleRepository::class);
         $domain = new ArticleSave($repository, $security, new Carbon());

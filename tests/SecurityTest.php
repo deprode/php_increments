@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Security;
+use App\Session;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +18,7 @@ class SecurityTest extends TestCase
     public function testGenerateToken()
     {
         /** @var Security|\Mockery\MockInterface $security */
-        $security = Mockery::mock(Security::class)->makePartial();
+        $security = Mockery::mock(Security::class, [new Session()])->makePartial();
         $security
             ->shouldAllowMockingProtectedMethods()
             ->shouldReceive('getToken')
@@ -30,7 +31,7 @@ class SecurityTest extends TestCase
     public function testValidToken()
     {
         $_SESSION['token'] = 'test token';
-        $security = new Security();
+        $security = new Security(new Session());
         $this->assertTrue($security->validToken('test token'));
     }
 }

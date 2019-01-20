@@ -4,6 +4,13 @@ namespace App;
 
 class Security
 {
+    private $session;
+
+    public function __construct(Session $session)
+    {
+        $this->session = $session;
+    }
+
     /**
      * @return string
      * @throws \Exception
@@ -17,7 +24,7 @@ class Security
     {
         try {
             $token = $this->getToken();
-            $_SESSION['token'] = $token;
+            $this->session->set('token', $token);
         } catch (\Exception $e) {
             exit(1);
         }
@@ -28,7 +35,7 @@ class Security
     public function validToken(string $token, string $saved_token = ''): bool
     {
         if (empty($saved_token)) {
-            $saved_token = $_SESSION['token'] ?? '';
+            $saved_token = $this->session->get('token') ?? '';
         }
 
         if ($token !== $saved_token) {

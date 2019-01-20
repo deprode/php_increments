@@ -40,7 +40,7 @@ $container->set('View', function (ContainerInterface $c) {
 });
 
 $container->set('Security', function () {
-    return new \App\Security();
+    return new \App\Security(new \App\Session());
 });
 
 $container->set('DBAL', function (ContainerInterface $c) {
