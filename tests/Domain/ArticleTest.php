@@ -7,7 +7,6 @@ use App\Repository\ArticleRepository;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Request;
 
 class ArticleTest extends TestCase
 {
