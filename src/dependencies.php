@@ -1,5 +1,7 @@
 <?php
 
+use Psr\Container\ContainerInterface;
+
 // DI
 $container = new DI\Container();
 
@@ -22,7 +24,7 @@ $container->set('settings', function () {
     ];
 });
 
-$container->set('Twig', function ($c) {
+$container->set('Twig', function (ContainerInterface $c) {
     $setting = $c->get('settings');
     // テンプレートをTwigにする
     $loader = new Twig_Loader_Filesystem($setting['template']);
@@ -33,7 +35,7 @@ $container->set('Twig', function ($c) {
     return $twig;
 });
 
-$container->set('View', function ($c) {
+$container->set('View', function (ContainerInterface $c) {
     return new App\Twig($c->get('Twig'));
 });
 
@@ -41,7 +43,7 @@ $container->set('Security', function () {
     return new \App\Security();
 });
 
-$container->set('DBAL', function ($c) {
+$container->set('DBAL', function (ContainerInterface $c) {
     $setting = $c->get('settings');
     $config = new \Doctrine\DBAL\Configuration();
 
@@ -56,7 +58,7 @@ $container->set('DBAL', function ($c) {
     return \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 });
 
-$container->set('Database', function ($c) {
+$container->set('Database', function (ContainerInterface $c) {
     return new App\Database($c->get('DBAL'));
 });
 
@@ -67,42 +69,42 @@ $container->set('Carbon', function () {
 /**
  * Action
  */
-$container->set(\App\Action\TopAction::class, function ($c) {
+$container->set(\App\Action\TopAction::class, function (ContainerInterface $c) {
     return new \App\Action\TopAction($c->get(\App\Domain\Top::class), $c->get('TopResponder'));
 });
-$container->set(\App\Action\ArticleSaveAction::class, function ($c) {
+$container->set(\App\Action\ArticleSaveAction::class, function (ContainerInterface $c) {
     return new \App\Action\ArticleSaveAction($c->get(\App\Domain\ArticleSave::class));
 });
-$container->set(\App\Action\ArticleAction::class, function ($c) {
+$container->set(\App\Action\ArticleAction::class, function (ContainerInterface $c) {
     return new \App\Action\ArticleAction($c->get(\App\Domain\Article::class), $c->get('ArticleResponder'));
 });
 
 /**
  * Model
  */
-$container->set(\App\Domain\Top::class, function ($c) {
+$container->set(\App\Domain\Top::class, function (ContainerInterface $c) {
     return new \App\Domain\Top($c->get('ArticleRepository'), $c->get('Security'), $c->get('settings'));
 });
-$container->set(\App\Domain\ArticleSave::class, function ($c) {
+$container->set(\App\Domain\ArticleSave::class, function (ContainerInterface $c) {
     return new \App\Domain\ArticleSave($c->get('ArticleRepository'), $c->get('Security'), $c->get('Carbon'));
 });
-$container->set(\App\Domain\Article::class, function ($c) {
+$container->set(\App\Domain\Article::class, function (ContainerInterface $c) {
     return new \App\Domain\Article($c->get('ArticleRepository'), $c->get('settings'));
 });
 
 /**
  * Repository
  */
-$container->set('ArticleRepository', function ($c) {
+$container->set('ArticleRepository', function (ContainerInterface $c) {
     return new \App\Repository\ArticleRepository($c->get('Database'));
 });
 
 /**
  * Responder
  */
-$container->set('TopResponder', function ($c) {
+$container->set('TopResponder', function (ContainerInterface $c) {
     return new \App\Responder\TopResponder($c->get('View'));
 });
-$container->set('ArticleResponder', function ($c) {
+$container->set('ArticleResponder', function (ContainerInterface $c) {
     return new \App\Responder\ArticleResponder($c->get('View'));
 });
