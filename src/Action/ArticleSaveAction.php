@@ -24,7 +24,6 @@ class ArticleSaveAction
         try {
             $this->domain->saveArticle($request->getParsedBody());
         } catch (\Exception $e) {
-            // TODO: エラー画面の表示
             $response->withStatus(503)->getBody()->write($e->getMessage());
             return $response;
         }

@@ -6,10 +6,9 @@ use Psr\Container\ContainerInterface;
 $container = new DI\Container();
 
 /**
- * 便利クラス // TODO: ここのコメントを考える
+ * Services
  */
 $container->set('settings', function () {
-    // TODO: blogの設定を設定DBから読み込む
     return [
         'title'       => 'PHP Increment',
         'subtitle'    => 'Hello World!',

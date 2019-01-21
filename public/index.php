@@ -32,7 +32,3 @@ set_exception_handler(function ($e) {
 require_once __DIR__ . '/../src/dependencies.php';
 
 require_once __DIR__ . '/../src/route.php';
-
-// TODO: 投稿の一覧
-// TODO: 投稿の詳細
-// TODO: 管理機能（記事の削除・記事の編集）
