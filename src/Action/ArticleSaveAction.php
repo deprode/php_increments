@@ -28,6 +28,6 @@ class ArticleSaveAction
             return $response;
         }
 
-        return $response->withStatus(303)->withHeader('Location', $request->getUri()->getPath());
+        return $response->withStatus(303)->withHeader('Location', '/');
     }
 }

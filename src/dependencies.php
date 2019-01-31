@@ -79,6 +79,9 @@ $container->set(\App\Action\ArticleSaveAction::class, function (ContainerInterfa
 $container->set(\App\Action\ArticleAction::class, function (ContainerInterface $c) {
     return new \App\Action\ArticleAction($c->get(\App\Domain\Article::class), $c->get('ArticleResponder'));
 });
+$container->set(\App\Action\NewArticleAction::class, function (ContainerInterface $c) {
+    return new \App\Action\NewArticleAction($c->get(\App\Domain\NewArticle::class), $c->get('NewArticleResponder'));
+});
 
 /**
  * Model
@@ -91,6 +94,9 @@ $container->set(\App\Domain\ArticleSave::class, function (ContainerInterface $c)
 });
 $container->set(\App\Domain\Article::class, function (ContainerInterface $c) {
     return new \App\Domain\Article($c->get('ArticleRepository'), $c->get('settings'));
+});
+$container->set(\App\Domain\NewArticle::class, function (ContainerInterface $c) {
+    return new \App\Domain\NewArticle($c->get('ArticleRepository'), $c->get('Security'), $c->get('settings'));
 });
 
 /**
@@ -108,4 +114,7 @@ $container->set('TopResponder', function (ContainerInterface $c) {
 });
 $container->set('ArticleResponder', function (ContainerInterface $c) {
     return new \App\Responder\ArticleResponder($c->get('View'));
+});
+$container->set('NewArticleResponder', function (ContainerInterface $c) {
+    return new \App\Responder\NewArticleResponder($c->get('View'));
 });

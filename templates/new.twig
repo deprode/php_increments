@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>New Article | {{ blog_title }}</title>
+</head>
+<body>
+<header>
+    <h1 class="title"><a href="../">{{ blog_title }}</a></h1>
+    <p class="subtitle">{{ blog_subtitle }}</p>
+</header>
+<main>
+    <h3>新しい記事を投稿する</h3>
+    <form action="./new" method="post">
+        <input type="hidden" name="token" value="{{ token }}">
+        <label for="title">タイトル：<input type="text" name="title" value="" placeholder="タイトル"></label><br>
+        <textarea name="body" cols="30" rows="10" placeholder="ブログの内容"></textarea>
+        <br>
+        <input type="submit" value="投稿する">
+    </form>
+</main>
+<footer>
+    ©{{ author }}
+</footer>
+</body>
+</html>
