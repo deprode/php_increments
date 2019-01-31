@@ -24,11 +24,13 @@ $container->set('settings', function () {
 });
 
 $container->set('Twig', function (ContainerInterface $c) {
+    $env = getenv('ENVIRONMENT');
+
     $setting = $c->get('settings');
     // テンプレートをTwigにする
     $loader = new Twig_Loader_Filesystem($setting['template']);
     $twig = new Twig_Environment($loader, [
-        'cache' => $setting['cache'],
+        'cache' => $env === 'DEV' ? false : $setting['cache'],
     ]);
 
     return $twig;

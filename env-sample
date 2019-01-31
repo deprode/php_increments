@@ -1,3 +1,5 @@
+ENVIRONMENT=DEV
+
 CACHE_PATH=../storage/cache
 TEMPLATE_PATH=../templates
 
