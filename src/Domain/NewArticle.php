@@ -20,7 +20,7 @@ class NewArticle
         $this->setting = $setting;
     }
 
-    public function __invoke(ServerRequestInterface $request): array
+    public function __invoke(): array
     {
         $blog_title = $this->setting['title'];
         $blog_subtitle = $this->setting['subtitle'];
