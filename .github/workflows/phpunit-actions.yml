@@ -1,0 +1,38 @@
+name: phpunit-actions
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  run-phpunit:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: mbstring, intl
+          ini-values: max_execution_time=180, date.timezone="Asia/Tokyo"
+          coverage: xdebug    
+          tools: phpunit, composer:v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist -n
+
+      - name: run phpunit
+        run: ./vendor/bin/phpunit
